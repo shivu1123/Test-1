@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test-1</title>
+    <style>
+        body{
+            font-family: "Roboto", sans-serif;
+            background-color: antiquewhite;
+        }
+      table {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+      }
+      input, button {
+        padding: 10px 16px;
+        margin: 5px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+        align: center;
+      }
+
+      table,th,td {
+        border: 1px solid black;
+      }
+
+      .error {
+        color: red;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+
+
+    <div  align="center">
+      <h1 style="text-decoration: underline;">Grade Calculator</h1><br>
+
+      <button onclick="addActivity()" id="addActivity">Add Activity </button>
+
+      <label for="activity">Activity:</label>
+      <input type="text" id="activity" size="10" placeholder="">
+
+      <label for="Weight">Weight:</label>
+      <input type="text" id="weight" size="3" pattern="\d*" placeholder="" title="Enter numbers only"><br>
+
+      
+
+      <br><br>
+
+      <button onclick="addGrade()" id="addGrade">Add Grade </button>
+
+      <label for="activityNo">Activity No:</label>
+      <input type="text" id="activityNo" size="3" pattern="\d*" placeholder="">
+
+      <label for="grade">Grade:</label>
+      <input type="text" id="grade" size="3" pattern="\d*" placeholder="" title="Enter numbers only"><br><br>
+
+      
+      <button onclick="deleteActivity()" id="deleteActivity">Delete Activity </button><br><br>
+      
+
+      <table id="test1Table">
+        <tr>
+          <th>No.</th>
+          <th>Activity</th>
+          <th>Weight</th>
+          <th>Grade</th>
+        </tr>
+      </table>
+
+      <p id="errormsg" class="error"></p>
+
+    </div>
+
+    <script>
+      var activityCount = 0;
+      var totalWeight = 0;
+      const errormsg = document.getElementById("errormsg");
+
+      function clearError() {
+        errormsg.textContent = "";
+      }
+
+      function clearActivityInputFields() {
+        document.getElementById("activity").value = "";
+        document.getElementById("weight").value = "";
+      }
+
+      function clearGradeInputFields() {
+        document.getElementById("activityNo").value = "";
+        document.getElementById("grade").value = "";
+      }
+
+      function addActivity() {
+        clearError();
+        const activityName = document.getElementById("activity").value;
+        const weight = document.getElementById("weight").value;
+
+        if (activityName === "" || weight === "") {
+          errormsg.textContent = "Please enter both activity name and weight.";
+          return;
+        }
+
+        if (isNaN(weight) || weight <= 0 || weight > 100) {
+          errormsg.textContent = "Please enter a valid weight (1-100).";
+          return;
+        }
+
+        totalWeight += parseInt(weight);
+        if (totalWeight > 100) {
+          errormsg.textContent = "Total weight cannot more than 100%.";
+          totalWeight -= parseInt(weight);
+          return;
+        }
+
+        const table = document.getElementById("test1Table");
+        activityCount++;
+
+        const newRow = table.insertRow();
+        newRow.insertCell(0).innerHTML = activityCount;
+        newRow.insertCell(1).innerHTML = activityName;
+        newRow.insertCell(2).innerHTML = weight;
+        newRow.insertCell(3).innerHTML = "";
+
+        clearActivityInputFields();
+      }
+
+      function addGrade() {
+        clearError();
+        const activityNo = document.getElementById("activityNo").value;
+        const grade = document.getElementById("grade").value;
+
+        if (activityNo === "" || grade === "") {
+          errormsg.textContent = "Please enter both activity number and grade.";
+          return;
+        }
+
+        if (isNaN(activityNo) || isNaN(grade) || grade < 0 || grade > 100 || activityNo > activityCount || activityNo <= 0) {
+          errormsg.textContent = "Please enter valid activity number and grade (0-100).";
+          return;
+        }
+
+        const table = document.getElementById("test1Table");
+        const row = table.rows[parseInt(activityNo)];
+        row.cells[3].innerHTML = grade;
+
+        clearGradeInputFields();
+      }
+
+      function deleteActivity() {
+        clearError();
+        const activityNo = document.getElementById("activityNo").value;
+
+        if (activityNo === "" || isNaN(activityNo) || activityNo > activityCount || activityNo <= 0) {
+          errormsg.textContent = "Please enter a valid activity number to delete.";
+          return;
+        }
+
+        const table = document.getElementById("test1Table");
+        table.deleteRow(parseInt(activityNo));
+
+        activityCount--;
+        clearGradeInputFields();
+      }
+    </script>
+  </body>
+</html>
